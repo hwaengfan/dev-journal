@@ -9,4 +9,4 @@
 
 1. 
 
-### Note: there is no current deployment because they would cost money to maintain, but I can deploy and run them anytime
+### Note: there is no current deployment because they would cost money to maintain
