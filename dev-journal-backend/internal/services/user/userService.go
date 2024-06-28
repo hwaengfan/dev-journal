@@ -30,8 +30,16 @@ func (handler *Handler) handleLogin(writer http.ResponseWriter, request *http.Re
 func (handler *Handler) handleRegister(writer http.ResponseWriter, request *http.Request) {
 	// get JSON payload
 	var payload userModel.RegisterUserPayload
-	if err := utils.ParseJSON(request, payload); err != nil {
+	if err := utils.ParseJSON(request, &payload); err != nil {
 		utils.WriteError(writer, http.StatusBadRequest, err)
+		return
+	}
+
+	// validate payload
+	if error := utils.Validate.Struct(payload); error != nil {
+		errors := error.(validator.ValidationErrors)
+		utils.WriteError(writer, http.StatusBadRequest, fmt.Errorf("Invalid payload: &v", errors))
+		return
 	}
 
 	// check if user exists
