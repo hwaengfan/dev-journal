@@ -1,8 +1,8 @@
 ## To run this locally, make sure to:
 
 1. Set up a MySQL database server
-2. fill in the correct environment variables
-3. migrate the tables
+2. Fill in the correct environment variables
+3. Migrate the tables
 
 #### Create a .env file containing:
 
@@ -14,14 +14,14 @@ DB_ADDRESS=127.0.0.1
 DB_NAME=dev-journal-database
 ```
 
-#### Create a Docker container for the MySQL database:
+#### Create and run a Docker container for the MySQL database server:
 
 ```
 docker run --name dev-journal-database -p 3306:3306 -e MYSQL_ROOT_PASSWORD=password -d mysql
 docker start dev-journal-database
 ```
 
-#### Migrate the tables for the MySQL database:
+#### Migrate the tables to the MySQL database:
 
 ```
 make migrate-up
@@ -33,6 +33,6 @@ make migrate-up
 make migrate-down
 ```
 
-#### Run the server:
+#### Run the backend server:
 
 `make run`
