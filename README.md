@@ -1,12 +1,12 @@
 # Dev Journal
 
-### Tech Stacks:
+#### Tech Stacks:
 
-- Frontend: TypeScript, Next.js
-- Backend: Go Lang, MySQL
+- Client: TypeScript, Next.js
+- Backend: Go, MySQL
 
-### Some Functionalities:
+#### Some Functionalities:
 
 1. 
 
-### Note: there is no current deployment because they would cost money to maintain
+#### Note: there is no current deployment because they would cost money to maintain, check out the client and backend folder separately for instructions to run locally
