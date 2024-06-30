@@ -1,4 +1,8 @@
-To run this locally, make sure to set up a MySQL database server
+## To run this locally, make sure to:
+
+1. Set up a MySQL database server
+2. fill in the correct environment variables
+3. migrate the tables
 
 #### Create a .env file containing:
 
@@ -9,8 +13,6 @@ DB_PASSWORD=password
 DB_ADDRESS=127.0.0.1
 DB_NAME=dev-journal-database
 ```
-
-To run the server: `make run`
 
 #### Create a Docker container for the MySQL database:
 
@@ -30,3 +32,7 @@ make migrate-up
 ```
 make migrate-down
 ```
+
+#### Run the server:
+
+`make run`
