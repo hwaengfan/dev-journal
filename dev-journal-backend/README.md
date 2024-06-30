@@ -7,11 +7,17 @@
 #### Create a .env file containing:
 
 ```
-PORT=3306
+PUBLIC_HOST=http://localhost
+PORT=8080
+
 DB_USER=root
 DB_PASSWORD=password
-DB_ADDRESS=127.0.0.1
+DB_HOST=127.0.0.1
+DB_PORT=3306
 DB_NAME=dev-journal-database
+
+JWT_EXPIRATION_IN_SECONDS=86400
+JWT_SECRET=dev-journal-secret
 ```
 
 #### Create and run a Docker container for the MySQL database server:
