@@ -35,4 +35,6 @@ make migrate-down
 
 #### Run the backend server:
 
-`make run`
+```
+make run
+```
