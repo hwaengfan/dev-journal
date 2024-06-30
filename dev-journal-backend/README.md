@@ -33,14 +33,14 @@ CREATE SCHEMA 'dev-journal-database';
 make migrate-up
 ```
 
-#### Clear tables in the MySQL database:
-
-```
-make migrate-down
-```
-
 #### Run the backend server:
 
 ```
 make run
+```
+
+#### Clear tables in the MySQL database:
+
+```
+make migrate-down
 ```
