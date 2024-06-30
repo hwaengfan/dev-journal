@@ -1,11 +1,4 @@
-To run this locally, make sure to create a Docker container for a MySQL server and set up the credentials in the environment variables.
-
-#### Create a Docker container:
-
-```
-docker run --name dev-journal-database -p 3306:3306 -e MYSQL_ROOT_PASSWORD=password -d mysql
-docker start dev-journal-database
-```
+To run this locally, make sure to set up a MySQL database server
 
 #### Create a .env file containing:
 
@@ -18,3 +11,22 @@ DB_NAME=dev-journal-database
 ```
 
 To run the server: `make run`
+
+#### Create a Docker container for the MySQL database:
+
+```
+docker run --name dev-journal-database -p 3306:3306 -e MYSQL_ROOT_PASSWORD=password -d mysql
+docker start dev-journal-database
+```
+
+#### Migrate the tables for the MySQL database:
+
+```
+make migrate-up
+```
+
+#### Clear tables in the MySQL database:
+
+```
+make migrate-down
+```
