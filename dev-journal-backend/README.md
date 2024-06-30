@@ -21,6 +21,12 @@ docker run --name dev-journal-database -p 3306:3306 -e MYSQL_ROOT_PASSWORD=passw
 docker start dev-journal-database
 ```
 
+#### Create a dev-journal-database schema in the server by connecting it via CLI or through an editor and run:
+
+```
+CREATE SCHEMA 'dev-journal-database';
+```
+
 #### Migrate the tables to the MySQL database:
 
 ```

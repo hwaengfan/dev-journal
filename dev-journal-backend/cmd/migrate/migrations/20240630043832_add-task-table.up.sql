@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS tasks (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `linkedProjectID` INT UNSIGNED NOT NULL,
+  `description` TEXT NOT NULL,
+  `completed` BOOLEAN NOT NULL DEFAULT FALSE,
+
+  PRIMARY KEY (id),
+  FOREIGN KEY (linkedProjectID) REFERENCES projects(id)
+);
