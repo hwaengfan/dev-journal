@@ -1,8 +1,8 @@
 package main
 
 import (
-	"log"
 	"fmt"
+	"log"
 
 	"github.com/go-sql-driver/mysql"
 	"github.com/hwaengfan/dev-journal-backend/configs"
@@ -21,11 +21,10 @@ func main() {
 		AllowNativePasswords: true,
 		ParseTime: true,
 	})
-
 	if error != nil {
 		log.Fatalf("Error occured while connecting to MySQL database: %v", error)
 	}
-
+	
 	defer mysqlStorage.Close()
 
 	// Setting up server

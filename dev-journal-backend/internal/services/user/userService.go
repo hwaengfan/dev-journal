@@ -3,11 +3,12 @@ package userService
 import (
 	"fmt"
 	"net/http"
-	
+
+	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
+	userModel "github.com/hwaengfan/dev-journal-backend/internal/models/user"
+	authenticationServices "github.com/hwaengfan/dev-journal-backend/internal/services/authentication"
 	"github.com/hwaengfan/dev-journal-backend/internal/utils"
-	"github.com/hwaengfan/dev-journal-backend/internal/models/user"
-	"github.com/hwaengfan/dev-journal-backend/internal/services/authentication"
 )
 
 type Handler struct {
@@ -38,14 +39,14 @@ func (handler *Handler) handleRegister(writer http.ResponseWriter, request *http
 	// validate payload
 	if error := utils.Validate.Struct(payload); error != nil {
 		errors := error.(validator.ValidationErrors)
-		utils.WriteError(writer, http.StatusBadRequest, fmt.Errorf("Invalid payload: &v", errors))
+		utils.WriteError(writer, http.StatusBadRequest, fmt.Errorf("invalid payload: %v", errors))
 		return
 	}
 
 	// check if user exists
 	_, error := handler.store.GetUserByEmail(payload.Email)
 	if error == nil {
-		utils.WriteError(writer, http.StatusConflict, fmt.Errorf("User with email %s already exists", payload.Email))
+		utils.WriteError(writer, http.StatusConflict, fmt.Errorf("user with email %s already exists", payload.Email))
 		return
 	}
 
@@ -63,7 +64,6 @@ func (handler *Handler) handleRegister(writer http.ResponseWriter, request *http
 		Email: payload.Email,
 		Password: hashedPassword,
 	})
-
 	if error != nil {
 		utils.WriteError(writer, http.StatusInternalServerError, error)
 		return

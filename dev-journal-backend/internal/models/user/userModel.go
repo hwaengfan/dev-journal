@@ -1,18 +1,18 @@
 package userModel
 
 type User struct {
-	ID int `json:"id"`
+	ID        int    `json:"id"`
 	FirstName string `json:"firstName"`
-	LastName string `json:"lastName"`
-	Email string `json:"email"`
-	Password string `json:"password"`
+	LastName  string `json:"lastName"`
+	Email     string `json:"email"`
+	Password  string `json:"password"`
 }
 
 type RegisterUserPayload struct {
 	FirstName string `json:"firstName" validate:"required"`
-	LastName string `json:"lastName" validate:"required"`
-	Email string `json:"email" validate:"required,email"`
-	Password string `json:"password" validate:"required,min=8,max=32`
+	LastName  string `json:"lastName" validate:"required"`
+	Email     string `json:"email" validate:"required,email"`
+	Password  string `json:"password" validate:"required,min=8,max=32"`
 }
 
 type UserStore interface {

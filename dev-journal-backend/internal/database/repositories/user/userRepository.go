@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/hwaengfan/dev-journal-backend/internal/models/user"
+	userModel "github.com/hwaengfan/dev-journal-backend/internal/models/user"
 )
 
 type Store struct {
@@ -32,7 +32,7 @@ func (store *Store) GetUserByEmail(email string) (*userModel.User, error) {
 	}
 
 	if user.ID == 0 {
-		return nil, fmt.Errorf("User not found")
+		return nil, fmt.Errorf("user not found")
 	}
 
 	return user, nil

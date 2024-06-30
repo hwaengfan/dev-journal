@@ -6,8 +6,8 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/hwaengfan/dev-journal-backend/internal/services/user"
-	"github.com/hwaengfan/dev-journal-backend/internal/database/repositories/user"
+	userRepository "github.com/hwaengfan/dev-journal-backend/internal/database/repositories/user"
+	userService "github.com/hwaengfan/dev-journal-backend/internal/services/user"
 )
 
 type Server struct {

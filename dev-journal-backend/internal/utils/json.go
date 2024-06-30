@@ -14,7 +14,7 @@ var Validate = validator.New()
 // @return json payload from request if there is any
 func ParseJSON(request *http.Request, payload any) error {
 	if request.Body == nil {
-		return fmt.Errorf("Request body is empty")
+		return fmt.Errorf("request body is empty")
 	}
 
 	return json.NewDecoder(request.Body).Decode(payload)
