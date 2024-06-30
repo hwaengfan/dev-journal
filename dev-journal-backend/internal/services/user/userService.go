@@ -28,8 +28,8 @@ func (handler *Handler) RegisterRoutes(router *mux.Router) {
 func (handler *Handler) handleLogin(writer http.ResponseWriter, request *http.Request) {
 	// get JSON payload
 	var payload userModel.LoginUserPayload
-	if err := utils.ParseJSON(request, &payload); err != nil {
-		utils.WriteError(writer, http.StatusBadRequest, err)
+	if error := utils.ParseJSON(request, &payload); error != nil {
+		utils.WriteError(writer, http.StatusBadRequest, error)
 		return
 	}
 
@@ -66,8 +66,8 @@ func (handler *Handler) handleLogin(writer http.ResponseWriter, request *http.Re
 func (handler *Handler) handleRegister(writer http.ResponseWriter, request *http.Request) {
 	// get JSON payload
 	var payload userModel.RegisterUserPayload
-	if err := utils.ParseJSON(request, &payload); err != nil {
-		utils.WriteError(writer, http.StatusBadRequest, err)
+	if error := utils.ParseJSON(request, &payload); error != nil {
+		utils.WriteError(writer, http.StatusBadRequest, error)
 		return
 	}
 
