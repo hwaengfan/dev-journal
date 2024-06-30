@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
+	"github.com/hwaengfan/dev-journal-backend/configs"
 	userModel "github.com/hwaengfan/dev-journal-backend/internal/models/user"
 	authenticationServices "github.com/hwaengfan/dev-journal-backend/internal/services/authentication"
 	"github.com/hwaengfan/dev-journal-backend/internal/utils"
@@ -25,7 +26,41 @@ func (handler *Handler) RegisterRoutes(router *mux.Router) {
 }
 
 func (handler *Handler) handleLogin(writer http.ResponseWriter, request *http.Request) {
-	// handle login
+	// get JSON payload
+	var payload userModel.LoginUserPayload
+	if err := utils.ParseJSON(request, &payload); err != nil {
+		utils.WriteError(writer, http.StatusBadRequest, err)
+		return
+	}
+
+	// validate payload
+	if error := utils.Validate.Struct(payload); error != nil {
+		errors := error.(validator.ValidationErrors)
+		utils.WriteError(writer, http.StatusBadRequest, fmt.Errorf("invalid payload: %v", errors))
+		return
+	}
+
+	// validate user authentication
+	user, error := handler.store.GetUserByEmail(payload.Email)
+	if error != nil {
+		utils.WriteError(writer, http.StatusNotFound, fmt.Errorf("not found, invalid email or password"))
+		return
+	}
+
+	if !authenticationServices.ComparePassword(user.Password, []byte(payload.Password)) {
+		utils.WriteError(writer, http.StatusNotFound, fmt.Errorf("not found, invalid email or password"))
+		return
+	}
+
+	// create JWT token
+	secret := []byte(configs.GlobalEnvironmentVariables.JWTSecret)
+	token, error := authenticationServices.CreateJWT(secret, user.ID)
+	if error != nil {
+		utils.WriteError(writer, http.StatusInternalServerError, fmt.Errorf("failed to create JWT token: %v", error))
+		return
+	}
+
+	utils.WriteJSON(writer, http.StatusOK, map[string]string{"token": token})
 }
 
 func (handler *Handler) handleRegister(writer http.ResponseWriter, request *http.Request) {
@@ -60,9 +95,9 @@ func (handler *Handler) handleRegister(writer http.ResponseWriter, request *http
 	// create user
 	error = handler.store.CreateUser(userModel.User{
 		FirstName: payload.FirstName,
-		LastName: payload.LastName,
-		Email: payload.Email,
-		Password: hashedPassword,
+		LastName:  payload.LastName,
+		Email:     payload.Email,
+		Password:  hashedPassword,
 	})
 	if error != nil {
 		utils.WriteError(writer, http.StatusInternalServerError, error)
