@@ -21,10 +21,11 @@ func NewHandler(store userModel.UserStore) *Handler {
 }
 
 func (handler *Handler) RegisterRoutes(router *mux.Router) {
-	router.HandleFunc("/login", handler.handleLogin).Methods("POST")
-	router.HandleFunc("/register", handler.handleRegister).Methods("POST")
+	router.HandleFunc("/login", handler.handleLogin).Methods(http.MethodPost)
+	router.HandleFunc("/register", handler.handleRegister).Methods(http.MethodPost)
 }
 
+// Handler function for user login
 func (handler *Handler) handleLogin(writer http.ResponseWriter, request *http.Request) {
 	// get JSON payload
 	var payload userModel.LoginUserPayload
@@ -36,7 +37,7 @@ func (handler *Handler) handleLogin(writer http.ResponseWriter, request *http.Re
 	// validate payload
 	if error := utils.Validate.Struct(payload); error != nil {
 		errors := error.(validator.ValidationErrors)
-		utils.WriteError(writer, http.StatusBadRequest, fmt.Errorf("invalid payload: %v", errors))
+		utils.WriteInvalidPayload(writer, errors)
 		return
 	}
 
@@ -63,6 +64,7 @@ func (handler *Handler) handleLogin(writer http.ResponseWriter, request *http.Re
 	utils.WriteJSON(writer, http.StatusOK, map[string]string{"token": token})
 }
 
+// Handler function for user registration
 func (handler *Handler) handleRegister(writer http.ResponseWriter, request *http.Request) {
 	// get JSON payload
 	var payload userModel.RegisterUserPayload
@@ -74,7 +76,7 @@ func (handler *Handler) handleRegister(writer http.ResponseWriter, request *http
 	// validate payload
 	if error := utils.Validate.Struct(payload); error != nil {
 		errors := error.(validator.ValidationErrors)
-		utils.WriteError(writer, http.StatusBadRequest, fmt.Errorf("invalid payload: %v", errors))
+		utils.WriteInvalidPayload(writer, errors)
 		return
 	}
 
