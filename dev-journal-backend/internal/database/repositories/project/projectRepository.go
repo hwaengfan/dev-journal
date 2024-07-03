@@ -31,7 +31,7 @@ func (store *Store) CreateProject(project projectModel.Project) error {
 // GetProjectsByUserID retrieves all projects by a user's ID
 func (store *Store) GetProjectsByUserID(userID uuid.UUID) ([]*projectModel.Project, error) {
 	// query projects by user ID
-	query := "SELECT * FROM projects WHERE userID = ?"
+	query := "SELECT id, title, description, priority, deadline, dateCreated, lastEdited FROM projects WHERE userID = ?"
 	rows, error := store.database.Query(query, userID)
 	if error != nil {
 		return nil, fmt.Errorf("failed to get projects by user ID: %v", error)
@@ -50,7 +50,7 @@ func (store *Store) GetProjectsByUserID(userID uuid.UUID) ([]*projectModel.Proje
 // GetProjectByID retrieves a project by its ID and user's ID
 func (store *Store) GetProjectByID(id uuid.UUID, userID uuid.UUID) (*projectModel.Project, error) {
 	// query project by ID
-	query := "SELECT * FROM projects WHERE id = ? AND userID = ?"
+	query := "SELECT id, title, description, priority, deadline, dateCreated, lastEdited FROM projects WHERE id = ? AND userID = ?"
 	row := store.database.QueryRow(query, id, userID)
 
 	// scan project from row
@@ -122,7 +122,7 @@ func scanProjectFromRows(rows *sql.Rows) ([]*projectModel.Project, error) {
 	for rows.Next() {
 		project := new(projectModel.Project)
 
-		error := rows.Scan(&project.ID, &project.UserID, &project.Title, &project.Description, &project.Priority, &project.Deadline, &project.DateCreated, &project.LastEdited)
+		error := rows.Scan(&project.ID, &project.Title, &project.Description, &project.Priority, &project.Deadline, &project.DateCreated, &project.LastEdited)
 		if error != nil {
 			return nil, fmt.Errorf("failed to scan project from rows: %v", error)
 		}
@@ -136,7 +136,7 @@ func scanProjectFromRows(rows *sql.Rows) ([]*projectModel.Project, error) {
 // scanProjectFromRow scans a MySQL row into a new project object
 func scanProjectFromRow(row *sql.Row) (*projectModel.Project, error) {
 	project := new(projectModel.Project)
-	error := row.Scan(&project.ID, &project.UserID, &project.Title, &project.Description, &project.Priority, &project.Deadline, &project.DateCreated, &project.LastEdited)
+	error := row.Scan(&project.ID, &project.Title, &project.Description, &project.Priority, &project.Deadline, &project.DateCreated, &project.LastEdited)
 
 	if error == sql.ErrNoRows {
 		return nil, fmt.Errorf("project not found")
