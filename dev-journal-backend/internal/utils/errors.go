@@ -7,7 +7,7 @@ import (
 
 // WriteError writes an error to the response
 func WriteError(writer http.ResponseWriter, status int, err error) {
-	WriteJSON(writer, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	WriteJSON(writer, status, map[string]string{"error": err.Error()})
 }
 
 // WriteInvalidPayload writes an invalid payload error to the response

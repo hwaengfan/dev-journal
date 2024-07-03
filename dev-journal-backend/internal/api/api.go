@@ -6,12 +6,14 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	projectRepository "github.com/hwaengfan/dev-journal-backend/internal/database/repositories/project"
 	userRepository "github.com/hwaengfan/dev-journal-backend/internal/database/repositories/user"
+	projectService "github.com/hwaengfan/dev-journal-backend/internal/services/project"
 	userService "github.com/hwaengfan/dev-journal-backend/internal/services/user"
 )
 
 type Server struct {
-	address string
+	address  string
 	database *sql.DB
 }
 
@@ -28,6 +30,11 @@ func (server *Server) Run() error {
 	userStore := userRepository.NewStore(server.database)
 	userHandler := userService.NewHandler(userStore)
 	userHandler.RegisterRoutes(subrouter)
+
+	// Set up project routes
+	projectStore := projectRepository.NewStore(server.database)
+	projectHandler := projectService.NewHandler(projectStore, userStore)
+	projectHandler.RegisterRoutes(subrouter)
 
 	// Start server
 	log.Println("Starting HTTP server on address", server.address)
