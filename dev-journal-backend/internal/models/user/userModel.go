@@ -1,16 +1,18 @@
 package userModel
 
+import "github.com/google/uuid"
+
 type User struct {
-	ID        int    `json:"id"`
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
-	Email     string `json:"email"`
-	Password  string `json:"password"`
+	ID        uuid.UUID `json:"id"`
+	FirstName string    `json:"firstName"`
+	LastName  string    `json:"lastName"`
+	Email     string    `json:"email"`
+	Password  string    `json:"password"`
 }
 
 type UserStore interface {
 	GetUserByEmail(email string) (*User, error)
-	GetUserByID(id int) (*User, error)
+	GetUserByID(id uuid.UUID) (*User, error)
 	CreateUser(user User) error
 }
 

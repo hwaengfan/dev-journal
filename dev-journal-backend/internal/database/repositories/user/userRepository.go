@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/google/uuid"
 	userModel "github.com/hwaengfan/dev-journal-backend/internal/models/user"
 )
 
@@ -27,7 +28,7 @@ func (store *Store) CreateUser(user userModel.User) error {
 }
 
 // GetUserByID retrieves a user by ID
-func (store *Store) GetUserByID(id int) (*userModel.User, error) {
+func (store *Store) GetUserByID(id uuid.UUID) (*userModel.User, error) {
 	// query user by ID
 	query := "SELECT * FROM users WHERE id = ?"
 	row := store.database.QueryRow(query, id)
