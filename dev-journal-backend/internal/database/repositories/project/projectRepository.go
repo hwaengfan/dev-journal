@@ -64,12 +64,12 @@ func (store *Store) GetProjectByID(id uuid.UUID, userID uuid.UUID) (*projectMode
 
 // UpdateProject updates a project by its ID and user's ID
 func (store *Store) UpdateProject(project projectModel.Project, id uuid.UUID, userID uuid.UUID) error {
-	// Base query
+	// base query
 	query := "UPDATE projects SET"
 	var updates []string
 	var args []interface{}
 
-	// Conditionally add fields to update
+	// conditionally add fields to update
 	if project.Title != "" {
 		updates = append(updates, "title = ?")
 		args = append(args, project.Title)
@@ -87,16 +87,16 @@ func (store *Store) UpdateProject(project projectModel.Project, id uuid.UUID, us
 		args = append(args, project.Deadline)
 	}
 
-	// Check if there are fields to update
+	// check if there are fields to update
 	if len(updates) == 0 {
 		return fmt.Errorf("no fields to update")
 	}
 
-	// Finalize query
+	// finalize query
 	query += " " + strings.Join(updates, ", ") + " WHERE id = ? AND userID = ?"
 	args = append(args, id, userID)
 
-	// Execute the query
+	// execute the query
 	_, err := store.database.Exec(query, args...)
 	if err != nil {
 		return fmt.Errorf("failed to update project: %v", err)
