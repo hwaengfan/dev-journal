@@ -30,16 +30,12 @@ func (store *Store) CreateUser(user userModel.User) error {
 func (store *Store) GetUserByID(id int) (*userModel.User, error) {
 	// query user by ID
 	query := "SELECT * FROM users WHERE id = ?"
-	row, error := store.database.Query(query, id)
-	if error != nil {
-		return nil, fmt.Errorf("failed to get user by id: %v", error)
-	}
-	defer row.Close()
+	row := store.database.QueryRow(query, id)
 
 	// scan user from row
 	user, error := scanUserFromRow(row)
 	if error != nil {
-		return nil, fmt.Errorf("failed to scan user from row: %v", error)
+		return nil, error
 	}
 
 	return user, nil
@@ -49,27 +45,26 @@ func (store *Store) GetUserByID(id int) (*userModel.User, error) {
 func (store *Store) GetUserByEmail(email string) (*userModel.User, error) {
 	// query user by email
 	query := "SELECT * FROM users WHERE email = ?"
-	row, error := store.database.Query(query, email)
-	if error != nil {
-		return nil, fmt.Errorf("failed to get user by email: %v", error)
-	}
-	defer row.Close()
+	row := store.database.QueryRow(query, email)
 
 	// scan user from row
 	user, error := scanUserFromRow(row)
 	if error != nil {
-		return nil, fmt.Errorf("failed to scan user from row: %v", error)
+		return nil, error
 	}
 
 	return user, nil
 }
 
 // scanUserFromRow scans a MySQL row into a new user object
-func scanUserFromRow(row *sql.Rows) (*userModel.User, error) {
+func scanUserFromRow(row *sql.Row) (*userModel.User, error) {
 	user := new(userModel.User)
 	error := row.Scan(&user.ID, &user.FirstName, &user.LastName, &user.Email, &user.Password)
-	if error != nil {
-		return nil, error
+
+	if error == sql.ErrNoRows {
+		return nil, fmt.Errorf("user not found")
+	} else if error != nil {
+		return nil, fmt.Errorf("failed to scan user from row: %v", error)
 	}
 
 	return user, nil
