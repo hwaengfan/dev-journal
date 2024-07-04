@@ -14,7 +14,7 @@ type Project struct {
 }
 
 type ProjectStore interface {
-	CreateProject(project Project) error
+	CreateProject(project Project) (uuid.UUID, error)
 	GetProjectsByUserID(userID uuid.UUID) ([]*Project, error)
 	GetProjectByID(id uuid.UUID, userID uuid.UUID) (*Project, error)
 	UpdateProject(project Project, id uuid.UUID, userID uuid.UUID) error

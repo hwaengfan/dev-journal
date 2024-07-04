@@ -58,7 +58,7 @@ func (handler *Handler) handleCreateNewProject(writer http.ResponseWriter, reque
 	}
 
 	// insert the new project into the database
-	error := handler.store.CreateProject(projectModel.Project{
+	projectID, error := handler.store.CreateProject(projectModel.Project{
 		UserID:      userID.UUID,
 		Title:       payload.Title,
 		Description: payload.Description,
@@ -70,7 +70,7 @@ func (handler *Handler) handleCreateNewProject(writer http.ResponseWriter, reque
 		return
 	}
 
-	utils.WriteJSON(writer, http.StatusCreated, nil)
+	utils.WriteJSON(writer, http.StatusCreated, map[string]uuid.UUID{"projectID": projectID})
 }
 
 // Handler function for getting all projects by user ID

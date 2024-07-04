@@ -18,14 +18,16 @@ func NewStore(database *sql.DB) *Store {
 }
 
 // CreateProject creates a new project
-func (store *Store) CreateProject(project projectModel.Project) error {
-	query := "INSERT INTO projects (userID, title, description, priority, deadline) VALUES (?, ?, ?, ?, ?)"
-	_, error := store.database.Exec(query, project.UserID, project.Title, project.Description, project.Priority, project.Deadline)
+func (store *Store) CreateProject(project projectModel.Project) (uuid.UUID, error) {
+	projectID := uuid.New()
+
+	query := "INSERT INTO projects (id, userID, title, description, priority, deadline) VALUES (?, ?, ?, ?, ?, ?)"
+	_, error := store.database.Exec(query, projectID, project.UserID, project.Title, project.Description, project.Priority, project.Deadline)
 	if error != nil {
-		return fmt.Errorf("failed to create project: %v", error)
+		return uuid.Nil, fmt.Errorf("failed to create project: %v", error)
 	}
 
-	return nil
+	return projectID, nil
 }
 
 // GetProjectsByUserID retrieves all projects by a user's ID
