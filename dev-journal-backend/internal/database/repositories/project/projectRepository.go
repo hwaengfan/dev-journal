@@ -41,7 +41,7 @@ func (store *Store) GetProjectsByUserID(userID uuid.UUID) ([]*projectModel.Proje
 	defer rows.Close()
 
 	// scan projects from rows
-	projects, error := scanProjectFromRows(rows)
+	projects, error := scanProjectsFromRows(rows)
 	if error != nil {
 		return nil, error
 	}
@@ -118,8 +118,8 @@ func (store *Store) DeleteProject(id uuid.UUID, userID uuid.UUID) error {
 	return nil
 }
 
-// scanProjectFromRows scans MySQL rows into a slice of project objects
-func scanProjectFromRows(rows *sql.Rows) ([]*projectModel.Project, error) {
+// scanProjectsFromRows scans MySQL rows into a slice of project objects
+func scanProjectsFromRows(rows *sql.Rows) ([]*projectModel.Project, error) {
 	projects := make([]*projectModel.Project, 0)
 	for rows.Next() {
 		project := new(projectModel.Project)
