@@ -49,11 +49,11 @@ func (store *Store) GetProjectsByUserID(userID uuid.UUID) ([]*projectModel.Proje
 	return projects, nil
 }
 
-// GetProjectByID retrieves a project by its ID and user's ID
-func (store *Store) GetProjectByID(id uuid.UUID, userID uuid.UUID) (*projectModel.Project, error) {
+// GetProjectByID retrieves a project by its ID
+func (store *Store) GetProjectByID(id uuid.UUID) (*projectModel.Project, error) {
 	// query project by ID
-	query := "SELECT id, title, description, priority, deadline, dateCreated, lastEdited FROM projects WHERE id = ? AND userID = ?"
-	row := store.database.QueryRow(query, id, userID)
+	query := "SELECT id, title, description, priority, deadline, dateCreated, lastEdited FROM projects WHERE id = ?"
+	row := store.database.QueryRow(query, id)
 
 	// scan project from row
 	project, error := scanProjectFromRow(row)
@@ -64,8 +64,8 @@ func (store *Store) GetProjectByID(id uuid.UUID, userID uuid.UUID) (*projectMode
 	return project, nil
 }
 
-// UpdateProject updates a project by its ID and user's ID
-func (store *Store) UpdateProject(project projectModel.Project, id uuid.UUID, userID uuid.UUID) error {
+// UpdateProjectByID updates a project by its ID
+func (store *Store) UpdateProjectByID(project projectModel.Project, id uuid.UUID) error {
 	// base query
 	query := "UPDATE projects SET"
 	var updates []string
@@ -95,8 +95,8 @@ func (store *Store) UpdateProject(project projectModel.Project, id uuid.UUID, us
 	}
 
 	// finalize query
-	query += " " + strings.Join(updates, ", ") + " WHERE id = ? AND userID = ?"
-	args = append(args, id, userID)
+	query += " " + strings.Join(updates, ", ") + " WHERE id = ?"
+	args = append(args, id)
 
 	// execute the query
 	_, err := store.database.Exec(query, args...)
@@ -107,10 +107,10 @@ func (store *Store) UpdateProject(project projectModel.Project, id uuid.UUID, us
 	return nil
 }
 
-// DeleteProject deletes a project by its ID and user's ID
-func (store *Store) DeleteProject(id uuid.UUID, userID uuid.UUID) error {
-	query := "DELETE FROM projects WHERE id = ? AND userID = ?"
-	_, error := store.database.Exec(query, id, userID)
+// DeleteProjectByID deletes a project by its ID
+func (store *Store) DeleteProjectByID(id uuid.UUID) error {
+	query := "DELETE FROM projects WHERE id = ?"
+	_, error := store.database.Exec(query, id)
 	if error != nil {
 		return fmt.Errorf("failed to delete project: %v", error)
 	}

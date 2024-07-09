@@ -115,7 +115,7 @@ func (handler *Handler) handleGetProjectByID(writer http.ResponseWriter, request
 	}
 
 	// get the project by ID
-	project, error := handler.store.GetProjectByID(projectID, userID.UUID)
+	project, error := handler.store.GetProjectByID(projectID)
 	if error != nil {
 		utils.WriteError(writer, http.StatusInternalServerError, fmt.Errorf("failed to get project by ID: %v", error))
 		return
@@ -161,12 +161,12 @@ func (handler *Handler) handleUpdateProjectByID(writer http.ResponseWriter, requ
 	}
 
 	// update the project by ID
-	error = handler.store.UpdateProject(projectModel.Project{
+	error = handler.store.UpdateProjectByID(projectModel.Project{
 		Title:       payload.Title,
 		Description: payload.Description,
 		Priority:    payload.Priority,
 		Deadline:    payload.Deadline,
-	}, projectID, userID.UUID)
+	}, projectID)
 	if error != nil {
 		if error.Error() == "no fields to update" {
 			utils.WriteError(writer, http.StatusBadRequest, error)
@@ -201,8 +201,10 @@ func (handler *Handler) handleDeleteProjectByID(writer http.ResponseWriter, requ
 		return
 	}
 
+	// delete all tasks linked to the project by ID
+
 	// delete the project by ID
-	error = handler.store.DeleteProject(projectID, userID.UUID)
+	error = handler.store.DeleteProjectByID(projectID)
 	if error != nil {
 		utils.WriteError(writer, http.StatusInternalServerError, error)
 		return
