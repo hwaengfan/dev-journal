@@ -168,7 +168,11 @@ func (handler *Handler) handleUpdateProjectByID(writer http.ResponseWriter, requ
 		Deadline:    payload.Deadline,
 	}, projectID, userID.UUID)
 	if error != nil {
-		utils.WriteError(writer, http.StatusInternalServerError, error)
+		if error.Error() == "no fields to update" {
+			utils.WriteError(writer, http.StatusBadRequest, error)
+		} else {
+			utils.WriteError(writer, http.StatusInternalServerError, error)
+		}
 		return
 	}
 
