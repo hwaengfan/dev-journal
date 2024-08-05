@@ -7,6 +7,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	noteModel "github.com/hwaengfan/dev-journal-backend/internal/models/note"
 	projectModel "github.com/hwaengfan/dev-journal-backend/internal/models/project"
 	taskModel "github.com/hwaengfan/dev-journal-backend/internal/models/task"
 	userModel "github.com/hwaengfan/dev-journal-backend/internal/models/user"
@@ -17,11 +18,12 @@ import (
 type Handler struct {
 	store     projectModel.ProjectStore
 	userStore userModel.UserStore
+	noteStore noteModel.NoteStore
 	taskStore taskModel.TaskStore
 }
 
-func NewHandler(store projectModel.ProjectStore, userStore userModel.UserStore, taskStore taskModel.TaskStore) *Handler {
-	return &Handler{store: store, userStore: userStore, taskStore: taskStore}
+func NewHandler(store projectModel.ProjectStore, userStore userModel.UserStore, noteStore noteModel.NoteStore, taskStore taskModel.TaskStore) *Handler {
+	return &Handler{store: store, userStore: userStore, noteStore: noteStore, taskStore: taskStore}
 }
 
 func (handler *Handler) RegisterRoutes(router *mux.Router) {
@@ -205,6 +207,13 @@ func (handler *Handler) handleDeleteProjectByID(writer http.ResponseWriter, requ
 
 	// delete all tasks linked to the project by ID
 	error = handler.taskStore.DeleteTasksByLinkedProjectID(projectID)
+	if error != nil {
+		utils.WriteError(writer, http.StatusInternalServerError, error)
+		return
+	}
+
+	// delete all notes linked to the project by ID
+	error = handler.noteStore.DeleteNotesByLinkedProjectID(projectID)
 	if error != nil {
 		utils.WriteError(writer, http.StatusInternalServerError, error)
 		return
