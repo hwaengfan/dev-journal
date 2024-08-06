@@ -57,10 +57,15 @@ func (handler *Handler) handleCreateNewTask(writer http.ResponseWriter, request 
 		return
 	}
 
+	// check if the linkedProjectID is provided
+	if payload.LinkedProjectID == uuid.Nil {
+		utils.WriteError(writer, http.StatusBadRequest, fmt.Errorf("missing linked project ID"))
+		return
+	}
+
 	// check if the project exists
-	_, error := handler.projectStore.GetProjectByID(payload.LinkedProjectID)
-	if error != nil {
-		utils.WriteError(writer, http.StatusBadRequest, fmt.Errorf("project does not exist to link task to"))
+	if error := handler.validateLinkedProjectID(payload.LinkedProjectID); error != nil {
+		utils.WriteError(writer, http.StatusBadRequest, error)
 		return
 	}
 
@@ -146,13 +151,16 @@ func (handler *Handler) handleUpdateTaskByID(writer http.ResponseWriter, request
 		return
 	}
 
-	// check if the project exists if the linkedProjectID is provided
-	if payload.LinkedProjectID != uuid.Nil {
-		_, error := handler.projectStore.GetProjectByID(payload.LinkedProjectID)
-		if error != nil {
-			utils.WriteError(writer, http.StatusBadRequest, fmt.Errorf("project does not exist to link task to"))
-			return
-		}
+	// check if the linkedProjectID is provided
+	if payload.LinkedProjectID == uuid.Nil {
+		utils.WriteError(writer, http.StatusBadRequest, fmt.Errorf("missing linked project ID"))
+		return
+	}
+
+	// check if the project exists
+	if error := handler.validateLinkedProjectID(payload.LinkedProjectID); error != nil {
+		utils.WriteError(writer, http.StatusBadRequest, error)
+		return
 	}
 
 	// update the task by ID
@@ -210,4 +218,14 @@ func (handler *Handler) handleDeleteTaskByID(writer http.ResponseWriter, request
 	}
 
 	utils.WriteJSON(writer, http.StatusOK, nil)
+}
+
+// validateLinkedProjectID check if the project exists
+func (handler *Handler) validateLinkedProjectID(linkedProjectID uuid.UUID) error {
+	_, error := handler.projectStore.GetProjectByID(linkedProjectID)
+	if error != nil {
+		return fmt.Errorf("project does not exist to link task to")
+	}
+
+	return nil
 }
