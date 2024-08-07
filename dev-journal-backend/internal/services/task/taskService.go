@@ -163,16 +163,20 @@ func (handler *Handler) handleUpdateTaskByID(writer http.ResponseWriter, request
 		return
 	}
 
-	// check if the linkedProjectID is provided
-	if payload.LinkedProjectID == uuid.Nil {
-		utils.WriteError(writer, http.StatusBadRequest, fmt.Errorf("missing linked project ID"))
+	// check if the task exists
+	error = handler.validateTaskID(taskID)
+	if error != nil {
+		utils.WriteError(writer, http.StatusBadRequest, error)
 		return
 	}
 
-	// check if the project exists
-	if error := handler.validateLinkedProjectID(payload.LinkedProjectID); error != nil {
-		utils.WriteError(writer, http.StatusBadRequest, error)
-		return
+	// check if the linkedProjectID is provided
+	if payload.LinkedProjectID != uuid.Nil {
+		// check if the project exists
+		if error := handler.validateLinkedProjectID(payload.LinkedProjectID); error != nil {
+			utils.WriteError(writer, http.StatusBadRequest, error)
+			return
+		}
 	}
 
 	// update the task by ID
@@ -237,6 +241,16 @@ func (handler *Handler) validateLinkedProjectID(linkedProjectID uuid.UUID) error
 	_, error := handler.projectStore.GetProjectByID(linkedProjectID)
 	if error != nil {
 		return fmt.Errorf("project ID does not exist")
+	}
+
+	return nil
+}
+
+// validateTaskID check if the task exists
+func (handler *Handler) validateTaskID(taskID uuid.UUID) error {
+	_, error := handler.store.GetTaskByID(taskID)
+	if error != nil {
+		return fmt.Errorf("task ID does not exist")
 	}
 
 	return nil
