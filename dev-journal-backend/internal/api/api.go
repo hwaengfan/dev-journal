@@ -6,9 +6,11 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	noteRepository "github.com/hwaengfan/dev-journal-backend/internal/database/repositories/note"
 	projectRepository "github.com/hwaengfan/dev-journal-backend/internal/database/repositories/project"
 	taskRepository "github.com/hwaengfan/dev-journal-backend/internal/database/repositories/task"
 	userRepository "github.com/hwaengfan/dev-journal-backend/internal/database/repositories/user"
+	noteService "github.com/hwaengfan/dev-journal-backend/internal/services/note"
 	projectService "github.com/hwaengfan/dev-journal-backend/internal/services/project"
 	taskService "github.com/hwaengfan/dev-journal-backend/internal/services/task"
 	userService "github.com/hwaengfan/dev-journal-backend/internal/services/user"
@@ -31,6 +33,7 @@ func (server *Server) Run() error {
 	// Set up stores
 	userStore := userRepository.NewStore(server.database)
 	projectStore := projectRepository.NewStore(server.database)
+	noteStore := noteRepository.NewStore(server.database)
 	taskStore := taskRepository.NewStore(server.database)
 
 	// Set up user routes
@@ -38,8 +41,12 @@ func (server *Server) Run() error {
 	userHandler.RegisterRoutes(subrouter)
 
 	// Set up project routes
-	projectHandler := projectService.NewHandler(projectStore, userStore, taskStore)
+	projectHandler := projectService.NewHandler(projectStore, userStore, noteStore, taskStore)
 	projectHandler.RegisterRoutes(subrouter)
+
+	// Set up note routes
+	noteHandler := noteService.NewHandler(noteStore, userStore, projectStore)
+	noteHandler.RegisterRoutes(subrouter)
 
 	// Set up task routes
 	taskHandler := taskService.NewHandler(taskStore, userStore, projectStore)
