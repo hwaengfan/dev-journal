@@ -95,13 +95,25 @@ func (handler *Handler) handleGetTasksByLinkedProjectID(writer http.ResponseWrit
 	// get projectID from URL
 	linkedProjectIDString, exists := mux.Vars(request)["projectID"]
 	if !exists {
-		utils.WriteError(writer, http.StatusBadRequest, fmt.Errorf("missing project ID"))
+		utils.WriteError(writer, http.StatusBadRequest, fmt.Errorf("missing project ID in parameter"))
 		return
 	}
 
 	linkedProjectID, error := uuid.Parse(linkedProjectIDString)
 	if error != nil {
 		utils.WriteError(writer, http.StatusBadRequest, fmt.Errorf("invalid project ID"))
+		return
+	}
+
+	// check if the linkedProjectID is provided
+	if linkedProjectID == uuid.Nil {
+		utils.WriteError(writer, http.StatusBadRequest, fmt.Errorf("null linked project ID"))
+		return
+	}
+
+	// check if the project exists
+	if error := handler.validateLinkedProjectID(linkedProjectID); error != nil {
+		utils.WriteError(writer, http.StatusBadRequest, error)
 		return
 	}
 
@@ -224,7 +236,7 @@ func (handler *Handler) handleDeleteTaskByID(writer http.ResponseWriter, request
 func (handler *Handler) validateLinkedProjectID(linkedProjectID uuid.UUID) error {
 	_, error := handler.projectStore.GetProjectByID(linkedProjectID)
 	if error != nil {
-		return fmt.Errorf("project does not exist to link task to")
+		return fmt.Errorf("project ID does not exist")
 	}
 
 	return nil
