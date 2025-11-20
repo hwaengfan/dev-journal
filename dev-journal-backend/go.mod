@@ -1,6 +1,6 @@
 module github.com/hwaengfan/dev-journal-backend
 
-go 1.22.4
+go 1.24.0
 
 require (
 	github.com/go-playground/validator/v10 v10.22.0
@@ -10,7 +10,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/mux v1.8.1
 	github.com/joho/godotenv v1.5.1
-	golang.org/x/crypto v0.24.0
+	golang.org/x/crypto v0.45.0
 )
 
 require (
@@ -22,7 +22,7 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
-	golang.org/x/net v0.23.0 // indirect
-	golang.org/x/sys v0.21.0 // indirect
-	golang.org/x/text v0.16.0 // indirect
+	golang.org/x/net v0.47.0 // indirect
+	golang.org/x/sys v0.38.0 // indirect
+	golang.org/x/text v0.31.0 // indirect
 )
